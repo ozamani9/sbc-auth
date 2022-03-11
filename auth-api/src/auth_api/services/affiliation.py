@@ -209,8 +209,9 @@ class Affiliation:
             # If consentFlag is not R, N or Null for a CONDITIONAL NR throw error
             if status == NRStatus.CONDITIONAL.value and nr_json.get('consentFlag', None) not in (None, 'R', 'N'):
                 raise BusinessException(Error.NR_NOT_APPROVED, None)
-
-            if (phone and phone != nr_phone) or (email and email != nr_email):
+            current_app.logger.debug(f'NR Applicant Email:{nr_email}; NR verify the Email:{email}')
+            if (phone and phone != nr_phone) or (email and email.casefold() != nr_email.casefold()):
+                current_app.logger.debug(f'CASEFOLD NR Applicant Email:{nr_email.casefold()}; CASEFOLD NR verify the Email:{email.casefold()}')
                 raise BusinessException(Error.NR_INVALID_CONTACT, None)
 
             # Create an entity with the Name from NR if entity doesn't exist
